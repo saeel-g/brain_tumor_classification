@@ -4,6 +4,21 @@ from tensorflow.keras.models import load_model
 from PIL import Image
 import numpy as np
 
+with st.sidebar:
+    st.markdown('''
+    # About
+    This Streamlit app classifies brain tumor MRI images into 4 different classes 
+    - **Classes:**
+        - Glioma: [(Details)](https://en.wikipedia.org/wiki/Glioma)          
+        - Meningioma: [(Details)](https://en.wikipedia.org/wiki/Meningioma)  
+        - Pituitary:[(Details)](https://en.wikipedia.org/wiki/Pituitary_adenoma) 
+        - No Tumor: No tumor is present 
+    
+    Using the InceptionResNetV2 model.
+    \n Made by Saeel Gote [(GitHub)](https://github.com/saeel-g)
+    \n Find the code on [GitHub](https://github.com/saeel-g/brain_tumor_classification)
+''')
+
 model = load_model('./trained models/train_InceptionResNetV2.h5')
 
 def preprocess_image(image):
@@ -14,9 +29,9 @@ def preprocess_image(image):
     image = np.expand_dims(image, axis=0)
     return image
 
-st.title('Image Classification App')
+st.title('Multiclass classification of Brain Tumor MRI Images')
 
-file = st.file_uploader('Upload an image', type=['.jpg', '.png', '.jpeg'])
+file = st.file_uploader('Upload an image', type=['.jpg', '.png', '.jpeg'],help="Minimum Image resolution Should be 256x256 px")
 
 if file is not None:
     # Display the uploaded image
@@ -31,4 +46,11 @@ if file is not None:
     predictions = model.predict(processed_image)
 
     # Display the predicted class
-    st.write(f"Predicted Class: {np.argmax(predictions)}")
+    if np.argmax(predictions)==0:
+        st.write(f"Predicted Class: Glioma ")
+    elif np.argmax(predictions)==1:
+        st.write(f"Predicted Class: Meningioma ")
+    elif np.argmax(predictions)==2:
+        st.write(f"Predicted Class: No Tumor ")
+    elif np.argmax(predictions)==3:
+        st.write(f"Predicted Class: Pituitary ")
