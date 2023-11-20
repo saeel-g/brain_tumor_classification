@@ -29,7 +29,7 @@ def preprocess_image(image):
     image = np.expand_dims(image, axis=0)
     return image
 
-st.title('Multiclass classification of Brain Tumor MRI Images')
+st.title('NeuroScan: Classifying Brain Tumor MRI Images')
 
 file = st.file_uploader('Upload an image', type=['.jpg', '.png', '.jpeg'],help="Minimum Image resolution Should be 256x256 px")
 
