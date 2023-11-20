@@ -1,6 +1,6 @@
 
 # NeuroScan: Classifying Brain Tumor MRI Images
-In the realm of medical imaging, NeuroScan is a deep learning model designed to classify Brain Tumor MRI images. Trained on various CNN architectures, including DenseNet121, InceptionV3, InceptionResNetV2, and MobileNet, NeuroScan achieved the highest accuracy with InceptionResNetV2 (96.65%). Consequently, InceptionResNetV2 was selected for implementation in the application, showcasing its effectiveness in accurate tumor classification.
+In the realm of medical imaging, NeuroScan is a deep learning model designed to classify Brain Tumor MRI images into four classes (Glioma, Meningiom, No Tumor, Pituitary). Trained on various CNN architectures, including DenseNet121, InceptionV3, InceptionResNetV2, and MobileNet, NeuroScan achieved the highest accuracy with InceptionResNetV2 (96.65%). Consequently, InceptionResNetV2 was selected for implementation in the application, showcasing its effectiveness in accurate tumor classification.
 
 ## Features
 * **InceptionResNetV2 Architecture:** NeuroScan utilizes the InceptionResNetV2 neural network architecture, combining inception modules and residual connections for intricate feature extraction and information flow.
