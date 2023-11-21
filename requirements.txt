@@ -109,7 +109,6 @@ PyQt5-sip==12.13.0
 pyrsistent==0.18.0
 python-dateutil==2.8.2
 pytz==2023.3.post1
-pywinpty==2.0.10
 PyYAML==6.0.1
 pyzmq==23.2.0
 requests==2.31.0
