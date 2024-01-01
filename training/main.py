@@ -80,6 +80,8 @@ for data_batch, labels_batch in train_generator:
 name_model='Test_MobileNet'
 # from models import InceptionNet
 model=MobileNet(weights=None,input_shape=(size,size,1),classes=4)
+for layers in model:
+    layers.trainable=False
 model.summary()
 model.compile(optimizer='adam',loss='categorical_crossentropy',metrics=['accuracy'])
 model_checkpoint = ModelCheckpoint(f"./trained models/train_{name_model}.h5", save_best_only=True)
