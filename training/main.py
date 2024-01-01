@@ -26,7 +26,7 @@ if gpus:
         print(e)
 
 # Load CSV file with image names and labels
-df = pd.read_csv('./dataset/lable.csv')
+df = pd.read_csv('../dataset/lable.csv')
 
 
 batch_size=8
@@ -46,7 +46,7 @@ size=256
 # Create training and validation generators
 train_generator = datagen.flow_from_dataframe(
     dataframe=df,
-    directory='./dataset/',
+    directory='../dataset/',
     x_col='IMG',
     y_col=['GLM','MNG','NTM','PIT'],
     subset='training',
@@ -60,7 +60,7 @@ train_generator = datagen.flow_from_dataframe(
 
 valid_generator = datagen.flow_from_dataframe(
     dataframe=df,
-    directory='./dataset/',
+    directory='../dataset/',
      x_col='IMG',
     y_col=['GLM','MNG','NTM','PIT'],
     subset='validation',
@@ -79,9 +79,20 @@ for data_batch, labels_batch in train_generator:
 
 name_model='Test_MobileNet'
 # from models import InceptionNet
-model=MobileNet(weights=None,input_shape=(size,size,1),classes=4)
-for layers in model:
-    layers.trainable=False
+base_model=MobileNet(weights=None, include_top=False, input_shape=(size,size,1), classes=4)
+for layer in base_model.layers:
+    layer.trainable=False
+
+x=GlobalAveragePooling2D()(base_model.output)
+x=Dense(1024, activation='relu')(x)
+x=BatchNormalization()(x)
+x=Dropout(0.1)(x)
+x=Dense(512, activation='relu')(x)
+x=BatchNormalization()(x)
+# x=Dense(256, activation='relu')(x)
+output=Dense(4, activation='softmax')(x)
+
+model=Model(inputs=base_model.input, outputs=output)
 model.summary()
 model.compile(optimizer='adam',loss='categorical_crossentropy',metrics=['accuracy'])
 model_checkpoint = ModelCheckpoint(f"./trained models/train_{name_model}.h5", save_best_only=True)
@@ -94,7 +105,9 @@ early_stopping=tf.keras.callbacks.EarlyStopping(
     baseline=None,
     restore_best_weights=True,
 )
+
 history = model.fit(train_generator,epochs=50,validation_data=valid_generator, batch_size=batch_size, shuffle=True,callbacks=[model_checkpoint, early_stopping])
+
 sns.set(style="whitegrid")
 plt.figure(figsize=(10, 6))
 plt.plot(history.history['accuracy'], label='Training Accuracy', linewidth=2)
