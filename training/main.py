@@ -97,7 +97,7 @@ model.summary()
 
 model.compile(optimizer='adam',loss='categorical_crossentropy',metrics=['accuracy'])
 
-model_checkpoint = ModelCheckpoint(f"./trained models/train_{name_model}.h5", save_best_only=True, verbose=1)
+model_checkpoint = ModelCheckpoint(f"../trained models/train_{name_model}.h5", save_best_only=True, verbose=1)
 
 
 history = model.fit(train_generator,epochs=50,validation_data=valid_generator, batch_size=batch_size, shuffle=True,callbacks=[model_checkpoint])
