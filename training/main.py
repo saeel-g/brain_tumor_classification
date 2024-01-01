@@ -2,7 +2,7 @@ import tensorflow as tf
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.applications import DenseNet121, VGG19, ResNet101V2, InceptionResNetV2, MobileNet, InceptionV3
+from tensorflow.keras.applications import DenseNet201, VGG19, ResNet101V2, InceptionResNetV2, MobileNet, InceptionV3
 from tensorflow.keras.layers import *
 from tensorflow.keras import layers, models, Model
 from tensorflow.keras.callbacks import EarlyStopping,CSVLogger, ModelCheckpoint
@@ -77,9 +77,9 @@ for data_batch, labels_batch in train_generator:
     print('Labels batch shape:', labels_batch.shape)
     break
 
-name_model='Test_MobileNet'
+name_model='DenseNet201'
 # from models import InceptionNet
-base_model=MobileNet(weights=None, include_top=False, input_shape=(size,size,1), classes=4)
+base_model=DenseNet201(weights='imagenet', include_top=False, input_shape=(size,size,1))
 for layer in base_model.layers:
     layer.trainable=False
 
@@ -94,39 +94,15 @@ output=Dense(4, activation='softmax')(x)
 
 model=Model(inputs=base_model.input, outputs=output)
 model.summary()
+
 model.compile(optimizer='adam',loss='categorical_crossentropy',metrics=['accuracy'])
-model_checkpoint = ModelCheckpoint(f"./trained models/train_{name_model}.h5", save_best_only=True)
 
-early_stopping=tf.keras.callbacks.EarlyStopping(
-    monitor='val_accuracy',
-    patience=12,
-    verbose=1,
-    mode='auto',
-    baseline=None,
-    restore_best_weights=True,
-)
+model_checkpoint = ModelCheckpoint(f"./trained models/train_{name_model}.h5", save_best_only=True, verbose=1)
 
-history = model.fit(train_generator,epochs=50,validation_data=valid_generator, batch_size=batch_size, shuffle=True,callbacks=[model_checkpoint, early_stopping])
 
-sns.set(style="whitegrid")
-plt.figure(figsize=(10, 6))
-plt.plot(history.history['accuracy'], label='Training Accuracy', linewidth=2)
-plt.plot(history.history['val_accuracy'], label='Validation Accuracy', linewidth=2)
-plt.xlabel('Epoch', fontsize=14)
-plt.ylabel('Accuracy', fontsize=14)
-plt.title(f"{name_model} Results", fontsize=16)
-plt.legend(loc='lower right', fontsize=12)
-plt.show()
+history = model.fit(train_generator,epochs=50,validation_data=valid_generator, batch_size=batch_size, shuffle=True,callbacks=[model_checkpoint])
 
-sns.set(style="whitegrid")
-plt.figure(figsize=(10, 6))
-plt.plot(history.history['loss'], label='loss')
-plt.plot(history.history['val_accuracy'], label='val_accuracy')
-plt.xlabel('Epoch')
-plt.ylabel('Accuracy')
-plt.title(f"{name_model}_results")
-plt.legend(loc='lower right')
-plt.show()
+
 hist_df = pd.DataFrame(history.history) 
 
 hist_csv_file = f'./training_results/{name_model}_history.csv'
